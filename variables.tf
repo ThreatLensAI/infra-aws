@@ -1,3 +1,7 @@
+variable "profile" {
+  type = string
+}
+
 variable "region" {
   type = string
 }
@@ -10,20 +14,12 @@ variable "vpc_cidr_range" {
   type = string
 }
 
-variable "private_subnets" {
+variable "subnets" {
   type = list(object({
-    name       = string
-    cidr_range = string
-    zone       = string
-  }))
-  default = []
-}
-
-variable "public_subnets" {
-  type = list(object({
-    name       = string
-    cidr_range = string
-    zone       = string
+    name               = string
+    public_cidr_block  = string
+    private_cidr_block = string
+    zone               = string
   }))
   default = []
 }
@@ -32,12 +28,12 @@ variable "internet_gateway_name" {
   type = string
 }
 
-variable "route_table_name" {
-  type = string
-}
-
-variable "route_cidr" {
-  type = string
+variable "route_tables" {
+  type = object({
+    public_route_table_name  = string
+    private_route_table_name = string
+    route_cidr               = string
+  })
 }
 
 variable "network_acl_ingress" {
@@ -63,6 +59,38 @@ variable "network_acl_egress" {
 // TODO: Implement security groups
 variable "security_group_name" {
   type = string
+}
+
+variable "node_sg" {
+  type = object({
+    name = string
+    rules = list(object({
+      description                   = string
+      protocol                      = string
+      from_port                     = number
+      to_port                       = number
+      type                          = string
+      self                          = optional(bool, null)
+      source_cluster_security_group = optional(bool, null)
+      cidr_blocks                   = optional(list(string), null)
+    }))
+  })
+}
+
+variable "cluster_sg" {
+  type = object({
+    name = string
+    rules = list(object({
+      description                = string
+      protocol                   = string
+      from_port                  = number
+      to_port                    = number
+      type                       = string
+      self                       = optional(bool, null)
+      source_node_security_group = optional(bool, null)
+      cidr_blocks                = optional(list(string), null)
+    }))
+  })
 }
 
 variable "eks_cluster" {

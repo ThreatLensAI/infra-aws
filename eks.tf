@@ -3,23 +3,18 @@ locals {
     for prop in var.eks_cluster.node_groups : prop.name => prop
   }
 }
-
-data "aws_iam_policy" "ebs_csi_policy" {
-  arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
-}
-
-module "irsa-ebs-csi" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version = "5.39.0"
-
-  create_role                   = true
-  role_name                     = "AmazonEKSTFEBSCSIRole-${module.eks.cluster_name}"
-  provider_url                  = module.eks.oidc_provider
-  role_policy_arns              = [data.aws_iam_policy.ebs_csi_policy.arn]
-  oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:ebs-csi-controller-sa"]
-}
-
 module "eks" {
+  depends_on = [
+    aws_security_group_rule.cluster,
+    aws_security_group_rule.node,
+
+    aws_iam_role.cluster,
+    aws_iam_role_policy_attachment.cluster,
+    aws_iam_role_policy_attachment.cluster_encryption,
+
+    aws_iam_role.node_group,
+    aws_iam_role_policy_attachment.node_group
+  ]
   source  = "terraform-aws-modules/eks/aws"
   version = "20.14.0"
 
@@ -32,18 +27,19 @@ module "eks" {
   cluster_endpoint_public_access  = var.eks_cluster.endpoint_public_access
   cluster_endpoint_private_access = var.eks_cluster.endpoint_private_access
   cluster_ip_family               = var.eks_cluster.ip_family
+  create_cluster_security_group   = false
+  cluster_security_group_id       = aws_security_group.cluster.id
 
   // KMS Symmetric Secretes encryption Keys
-  create_kms_key                = true
-  kms_key_description           = "Amazon EKS cluster secrets encryption key"
-  kms_key_enable_default_policy = true
+  create_kms_key                = false
   cluster_encryption_config = {
-    "resources" : ["secrets"]
+    provider_key_arn : module.kms_cluster.key_arn
+    resources: ["secrets"]
   }
 
   // EKS Cluster service role.
-  create_iam_role = true
-  iam_role_name   = "${var.eks_cluster.name}-service-role"
+  create_iam_role = false
+  iam_role_arn = aws_iam_role.cluster.arn
 
   // EKS Cluster Addons
   cluster_addons = {
@@ -60,23 +56,33 @@ module "eks" {
     vpc-cni = {
       most_recent = true
     }
+    kube-proxy = {
+      most_recent = true
+    }
   }
+
+  enable_irsa = true
 
   // EKS Cluster logging configuration
   cluster_enabled_log_types = var.eks_cluster.log_types
 
   enable_cluster_creator_admin_permissions = true
 
-  vpc_id     = aws_vpc.cluster.id
-  subnet_ids = aws_subnet.private[*].id
+  vpc_id                   = aws_vpc.cluster.id
+  control_plane_subnet_ids = concat(aws_subnet.private[*].id, aws_subnet.public[*].id)
 
-  dataplane_wait_duration = "900s"
+  dataplane_wait_duration = "30s"
 
   // EKS Managed Node Groups Defaults
   eks_managed_node_group_defaults = {
     ami_type = var.eks_cluster.ami_type
+    subnet_ids = aws_subnet.private[*].id
+    create_iam_role = false
+    iam_role_arn = aws_iam_role.node_group.arn
   }
 
   // EKS Managed Node Groups
+  create_node_security_group = false
+  node_security_group_id  = aws_security_group.node.id
   eks_managed_node_groups = local.node_groups
 }

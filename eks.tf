@@ -31,15 +31,15 @@ module "eks" {
   cluster_security_group_id       = aws_security_group.cluster.id
 
   // KMS Symmetric Secretes encryption Keys
-  create_kms_key                = false
+  create_kms_key = false
   cluster_encryption_config = {
     provider_key_arn : module.kms_cluster.key_arn
-    resources: ["secrets"]
+    resources : ["secrets"]
   }
 
   // EKS Cluster service role.
   create_iam_role = false
-  iam_role_arn = aws_iam_role.cluster.arn
+  iam_role_arn    = aws_iam_role.cluster.arn
 
   // EKS Cluster Addons
   cluster_addons = {
@@ -75,14 +75,14 @@ module "eks" {
 
   // EKS Managed Node Groups Defaults
   eks_managed_node_group_defaults = {
-    ami_type = var.eks_cluster.ami_type
-    subnet_ids = aws_subnet.private[*].id
+    ami_type        = var.eks_cluster.ami_type
+    subnet_ids      = aws_subnet.private[*].id
     create_iam_role = false
-    iam_role_arn = aws_iam_role.node_group.arn
+    iam_role_arn    = aws_iam_role.node_group.arn
   }
 
   // EKS Managed Node Groups
   create_node_security_group = false
-  node_security_group_id  = aws_security_group.node.id
-  eks_managed_node_groups = local.node_groups
+  node_security_group_id     = aws_security_group.node.id
+  eks_managed_node_groups    = local.node_groups
 }

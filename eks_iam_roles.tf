@@ -8,31 +8,30 @@ locals {
 
 data "aws_iam_policy_document" "assume_role_policy_cluster" {
   statement {
-    sid     = "EKSClusterAssumeRole"
-    actions = ["sts:AssumeRole"]
+    sid     = var.cluster_iam.assume_role_policy.sid
+    actions = var.cluster_iam.assume_role_policy.actions
 
     principals {
-      type        = "Service"
-      identifiers = ["eks.amazonaws.com"]
+      type        = var.cluster_iam.assume_role_policy.type
+      identifiers = var.cluster_iam.assume_role_policy.identifiers
     }
   }
 }
 
 resource "aws_iam_role" "cluster" {
-  name        = "ClusterRole"
-  description = "Role for EKS Cluster"
+  name        = var.cluster_iam.role_name
+  description = var.cluster_iam.description
 
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy_cluster.json
 
   tags = {
-    Name = "ClusterRole"
+    Name = var.cluster_iam.role_name
   }
 }
 
 locals {
   policies_cluster = [
-    "arn:${local.partition}:iam::aws:policy/AmazonEKSVPCResourceController",
-    "arn:${local.partition}:iam::aws:policy/AmazonEKSClusterPolicy"
+    for policy in var.cluster_iam.cluster_policies : "arn:${local.partition}:iam::aws:policy/${policy}"
   ]
 }
 
@@ -46,19 +45,14 @@ resource "aws_iam_role_policy_attachment" "cluster" {
 
 data "aws_iam_policy_document" "cluster_kms_policy" {
   statement {
-    sid = "KMSKeyUseRole"
-    actions = [
-      "kms:Encrypt",
-      "kms:Decrypt",
-      "kms:ListGrants",
-      "kms:DescribeKey",
-    ]
+    sid       = var.cluster_iam.kms.sid
+    actions   = var.cluster_iam.kms.actions
     resources = [module.kms_cluster.key_arn]
   }
 }
 
 resource "aws_iam_policy" "cluster_encryption" {
-  name   = "AmazonKMSKeyUseClusterCustom"
+  name   = var.cluster_iam.kms.policy_name
   policy = data.aws_iam_policy_document.cluster_kms_policy.json
 }
 
@@ -71,32 +65,30 @@ resource "aws_iam_role_policy_attachment" "cluster_encryption" {
 
 data "aws_iam_policy_document" "assume_role_policy_node_group" {
   statement {
-    sid     = "EKSNodeAssumeRole"
-    actions = ["sts:AssumeRole"]
+    sid     = var.node_group_iam.assume_role_policy.sid
+    actions = var.node_group_iam.assume_role_policy.actions
 
     principals {
-      type        = "Service"
-      identifiers = ["ec2.amazonaws.com"]
+      type        = var.node_group_iam.assume_role_policy.type
+      identifiers = var.node_group_iam.assume_role_policy.identifiers
     }
   }
 }
 
 resource "aws_iam_role" "node_group" {
-  name        = "NodeGroupRole"
-  description = "Role for Node Group"
+  name        = var.node_group_iam.role_name
+  description = var.node_group_iam.description
 
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy_node_group.json
 
   tags = {
-    Name = "NodeGroupRole"
+    Name = var.node_group_iam.role_name
   }
 }
 
 locals {
   policies_node_group = [
-    "arn:${local.partition}:iam::aws:policy/AmazonEKS_CNI_Policy",
-    "arn:${local.partition}:iam::aws:policy/AmazonEKSWorkerNodePolicy",
-    "arn:${local.partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+    for policy in var.node_group_iam.policies : "arn:${local.partition}:iam::aws:policy/${policy}"
   ]
 }
 

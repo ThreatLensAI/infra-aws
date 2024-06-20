@@ -27,62 +27,62 @@ module "eks" {
   cluster_endpoint_public_access  = var.eks_cluster.endpoint_public_access
   cluster_endpoint_private_access = var.eks_cluster.endpoint_private_access
   cluster_ip_family               = var.eks_cluster.ip_family
-  create_cluster_security_group   = false
+  create_cluster_security_group   = var.eks_cluster.create_cluster_security_group
   cluster_security_group_id       = aws_security_group.cluster.id
 
   // KMS Symmetric Secretes encryption Keys
-  create_kms_key = false
+  create_kms_key = var.eks_cluster.create_kms_key
   cluster_encryption_config = {
     provider_key_arn : module.kms_cluster.key_arn
     resources : ["secrets"]
   }
 
   // EKS Cluster service role.
-  create_iam_role = false
+  create_iam_role = var.eks_cluster.create_cluster_iam_role
   iam_role_arn    = aws_iam_role.cluster.arn
 
   // EKS Cluster Addons
   cluster_addons = {
     aws-ebs-csi-driver = {
       service_account_role_arn = module.irsa-ebs-csi.iam_role_arn
-      most_recent              = true
+      most_recent              = var.eks_cluster.addons_version_most_recent
     }
     eks-pod-identity-agent = {
-      most_recent = true
+      most_recent = var.eks_cluster.addons_version_most_recent
     }
     coredns = {
-      most_recent = true
+      most_recent = var.eks_cluster.addons_version_most_recent
     }
     vpc-cni = {
-      most_recent = true
+      most_recent = var.eks_cluster.addons_version_most_recent
     }
     kube-proxy = {
-      most_recent = true
+      most_recent = var.eks_cluster.addons_version_most_recent
     }
   }
 
-  enable_irsa = true
+  enable_irsa = var.eks_cluster.enable_irsa
 
   // EKS Cluster logging configuration
   cluster_enabled_log_types = var.eks_cluster.log_types
 
-  enable_cluster_creator_admin_permissions = true
+  enable_cluster_creator_admin_permissions = var.eks_cluster.creator_admin_permissions
 
   vpc_id                   = aws_vpc.cluster.id
   control_plane_subnet_ids = concat(aws_subnet.private[*].id, aws_subnet.public[*].id)
 
-  dataplane_wait_duration = "30s"
+  dataplane_wait_duration = var.eks_cluster.dataplane_wait_duration
 
   // EKS Managed Node Groups Defaults
   eks_managed_node_group_defaults = {
     ami_type        = var.eks_cluster.ami_type
     subnet_ids      = aws_subnet.private[*].id
-    create_iam_role = false
-    iam_role_arn    = aws_iam_role.node_group.arn
+    create_iam_role = var.eks_cluster.create_node_iam_role
+    iam_role_arn    = aws_iam_role.node_group.arn,
   }
 
   // EKS Managed Node Groups
-  create_node_security_group = false
+  create_node_security_group = var.eks_cluster.create_node_security_group
   node_security_group_id     = aws_security_group.node.id
   eks_managed_node_groups    = local.node_groups
 }

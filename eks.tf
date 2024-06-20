@@ -79,6 +79,15 @@ module "eks" {
     subnet_ids      = aws_subnet.private[*].id
     create_iam_role = var.eks_cluster.create_node_iam_role
     iam_role_arn    = aws_iam_role.node_group.arn,
+    block_device_mappings = [
+      {
+        device_name = var.eks_cluster.node_group_device_name
+        ebs = {
+          encrypted = module.kms_cluster.key_arn != null
+          kms_key_id = module.kms_cluster.key_arn
+        }
+      }
+    ]
   }
 
   // EKS Managed Node Groups

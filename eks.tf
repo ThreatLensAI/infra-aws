@@ -83,7 +83,7 @@ module "eks" {
       {
         device_name = var.eks_cluster.node_group_device_name
         ebs = {
-          encrypted = module.kms_cluster.key_arn != null
+          encrypted  = module.kms_cluster.key_arn != null
           kms_key_id = module.kms_cluster.key_arn
         }
       }

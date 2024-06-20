@@ -175,7 +175,7 @@ variable "eks_cluster" {
     create_node_security_group    = optional(bool, false)
     create_node_iam_role          = optional(bool, false)
     dataplane_wait_duration       = optional(string, "30s")
-    node_group_device_name = optional(string, "/dev/xvda")
+    node_group_device_name        = optional(string, "/dev/xvda")
     log_types = optional(list(string), [
       "api",
       "audit",

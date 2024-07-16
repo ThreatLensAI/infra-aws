@@ -98,3 +98,22 @@ resource "aws_iam_role_policy_attachment" "node_group" {
   role       = aws_iam_role.node_group.name
 }
 
+// CLUSTER AUTOSCALER POLICY SETUP
+
+data "aws_iam_policy_document" "cluster_autoscaler_policy_document" {
+  dynamic "statement" {
+    for_each = var.ca-iam.policy.statements
+    content {
+      effect    = statement.value.effect
+      actions   = statement.value.actions
+      resources = statement.value.resources
+    }
+  }
+}
+
+resource "aws_iam_policy" "cluster_autoscaler_policy" {
+  name        = var.ca-iam.policy.name
+  description = var.ca-iam.policy.description
+  policy      = data.aws_iam_policy_document.cluster_autoscaler_policy_document.json
+}
+

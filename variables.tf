@@ -184,6 +184,7 @@ variable "eks_cluster" {
     ])
     node_groups = list(object({
       name           = string
+      tags           = optional(map(string), {})
       ami_type       = optional(string)
       capacity_type  = optional(string, "ON_DEMAND")
       instance_types = optional(list(string), ["c3.large"])
@@ -212,6 +213,24 @@ variable "ebs" {
       sid         = string
       actions     = list(string)
       policy_name = string
+    })
+  })
+}
+
+variable "ca-iam" {
+  type = object({
+    create_role                    = optional(bool, true)
+    role_name                      = string
+    oidc_fully_qualified_audiences = list(string)
+    oidc_fully_qualified_subjects  = list(string)
+    policy = object({
+      name        = string
+      description = string
+      statements = list(object({
+        effect    = string
+        actions   = list(string)
+        resources = list(string)
+      }))
     })
   })
 }
@@ -289,4 +308,16 @@ variable "password_defaults" {
     special = false
     length  = 24
   }
+}
+
+variable "eks_bootstrap_autoscaler" {
+  type = object({
+    name              = string
+    version           = optional(string, null)
+    namespace         = optional(string, "cluster-autoscaler")
+    repository        = optional(string, null)
+    chart             = string
+    values            = optional(map(string), {})
+    values_file_paths = optional(list(string), [])
+  })
 }

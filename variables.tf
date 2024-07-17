@@ -321,3 +321,22 @@ variable "eks_bootstrap_autoscaler" {
     values_file_paths = optional(list(string), [])
   })
 }
+
+variable "eks_bootstrap_consumer" {
+  type = object({
+    name              = string
+    version           = optional(string, null)
+    namespace         = optional(string, "consumer")
+    repository        = optional(string, null)
+    chart             = string
+    values            = optional(map(string), {})
+    values_file_paths = optional(list(string), [])
+  })
+}
+
+variable "eks_bootstrap_consumer_sensitive_values" {
+  sensitive = true
+  type = object({
+    dockerhubconfigjson = string
+  })
+}

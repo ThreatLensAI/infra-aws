@@ -35,5 +35,4 @@ terraform.rc
 
 # Ignore terraform lock files
 .terraform.lock.hcl
-kafka.values.yaml
-postgres.values.yaml
+*.values.yaml

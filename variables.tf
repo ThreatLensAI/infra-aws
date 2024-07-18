@@ -335,3 +335,125 @@ variable "eks_bootstrap_consumer_sensitive_values" {
     dockerhubconfigjson = string
   })
 }
+
+variable "eks_bootstrap_postgresql_limit_range" {
+  type = list(object({
+    type            = string
+    default         = optional(map(string), null)
+    default_request = optional(map(string), null)
+    min             = optional(map(string), null)
+    max             = optional(map(string), null)
+  }))
+
+  default = [{
+    type = "Container"
+    default = {
+      cpu    = "750m"
+      memory = "1536Mi"
+    }
+    default_request = {
+      cpu    = "500m"
+      memory = "1024Mi"
+    }
+  }]
+}
+
+variable "eks_bootstrap_kafka_limit_range" {
+  type = list(object({
+    type            = string
+    default         = optional(map(string), null)
+    default_request = optional(map(string), null)
+    min             = optional(map(string), null)
+    max             = optional(map(string), null)
+  }))
+
+  default = [{
+    type = "Container"
+    default = {
+      cpu    = "1.0"
+      memory = "2048Mi"
+    }
+    default_request = {
+      cpu    = "750m"
+      memory = "1536Mi"
+    }
+  }]
+}
+
+variable "eks_bootstrap_consumer_limit_range" {
+  type = list(object({
+    type            = string
+    default         = optional(map(string), null)
+    default_request = optional(map(string), null)
+    min             = optional(map(string), null)
+    max             = optional(map(string), null)
+  }))
+
+  default = [{
+    type = "Container"
+    default = {
+      cpu    = "500m"
+      memory = "384Mi"
+    }
+    default_request = {
+      cpu    = "375m"
+      memory = "256Mi"
+    }
+  }]
+}
+
+variable "eks_bootstrap_autoscaler_limit_range" {
+  type = list(object({
+    type            = string
+    default         = optional(map(string), null)
+    default_request = optional(map(string), null)
+    min             = optional(map(string), null)
+    max             = optional(map(string), null)
+  }))
+
+  default = [{
+    type = "Container"
+    default = {
+      cpu    = "200m"
+      memory = "200Mi"
+    }
+    default_request = {
+      cpu    = "100m"
+      memory = "100Mi"
+    }
+  }]
+}
+
+variable "eks_bootstrap_processor" {
+  type = object({
+    name              = string
+    version           = optional(string, )
+    namespace         = optional(string, "processor")
+    repository        = optional(string, null)
+    chart             = optional(string, null)
+    values            = optional(map(string), {})
+    values_file_paths = optional(list(string), [])
+  })
+}
+
+variable "eks_bootstrap_processor_limit_range" {
+  type = list(object({
+    type            = string
+    default         = optional(map(string), null)
+    default_request = optional(map(string), null)
+    min             = optional(map(string), null)
+    max             = optional(map(string), null)
+  }))
+
+  default = [{
+    type = "Container"
+    default = {
+      cpu    = "500m"
+      memory = "384Mi"
+    }
+    default_request = {
+      cpu    = "375m"
+      memory = "256Mi"
+    }
+  }]
+}

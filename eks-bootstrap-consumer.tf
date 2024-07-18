@@ -59,3 +59,25 @@ resource "helm_release" "consumer" {
 
   depends_on = [kubernetes_namespace.consumer, helm_release.kafka, helm_release.postgresql]
 }
+
+resource "kubernetes_limit_range" "consumer" {
+  count = length(var.eks_bootstrap_consumer_limit_range) > 0 ? 1 : 0
+
+  metadata {
+    name      = "${kubernetes_namespace.consumer.metadata.0.name}-limit-range"
+    namespace = kubernetes_namespace.consumer.metadata.0.name
+  }
+
+  dynamic "spec" {
+    for_each = var.eks_bootstrap_consumer_limit_range
+    content {
+      limit {
+        type            = spec.value.type
+        default         = try(spec.value.default, null)
+        default_request = try(spec.value.default_request, null)
+        min             = try(spec.value.min, null)
+        max             = try(spec.value.max, null)
+      }
+    }
+  }
+}

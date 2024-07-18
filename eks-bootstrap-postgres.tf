@@ -64,3 +64,25 @@ resource "helm_release" "postgresql" {
     helm_release.autoscaler
   ]
 }
+
+resource "kubernetes_limit_range" "postgresql" {
+  count = length(var.eks_bootstrap_postgresql_limit_range) > 0 ? 1 : 0
+
+  metadata {
+    name      = "${kubernetes_namespace.postgresql.metadata.0.name}-limit-range"
+    namespace = kubernetes_namespace.postgresql.metadata.0.name
+  }
+
+  dynamic "spec" {
+    for_each = var.eks_bootstrap_postgresql_limit_range
+    content {
+      limit {
+        type            = spec.value.type
+        default         = try(spec.value.default, null)
+        default_request = try(spec.value.default_request, null)
+        min             = try(spec.value.min, null)
+        max             = try(spec.value.max, null)
+      }
+    }
+  }
+}

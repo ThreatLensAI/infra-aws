@@ -55,6 +55,7 @@ resource "helm_release" "kafka" {
     kubernetes_namespace.kafka,
     kubernetes_storage_class.ebs,
     random_password.kafka_password,
-    module.eks.cluster_name
+    module.eks.cluster_name,
+    helm_release.autoscaler
   ]
 }

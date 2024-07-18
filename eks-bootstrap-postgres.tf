@@ -60,6 +60,7 @@ resource "helm_release" "postgresql" {
     kubernetes_namespace.postgresql,
     random_password.database_password,
     kubernetes_storage_class.ebs,
-    module.eks.cluster_name
+    module.eks.cluster_name,
+    helm_release.autoscaler
   ]
 }

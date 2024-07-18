@@ -188,9 +188,9 @@ variable "eks_cluster" {
       ami_type       = optional(string)
       capacity_type  = optional(string, "ON_DEMAND")
       instance_types = optional(list(string), ["c3.large"])
-      desired_size   = optional(number, 3)
-      min_size       = optional(number, 3)
-      max_size       = optional(number, 6)
+      desired_size   = optional(number, 1)
+      min_size       = optional(number, 1)
+      max_size       = optional(number, 2)
       update_config = optional(object({
         max_unavailable = optional(number, 1)
         max_surge       = optional(number, 0)
@@ -285,11 +285,6 @@ variable "eks_bootstrap_kafka_sensitive_values" {
   type = object({
     username = string
   })
-}
-
-variable "eks_namespaces" {
-  type    = list(string)
-  default = ["processor", "consumer"]
 }
 
 variable "password_defaults" {

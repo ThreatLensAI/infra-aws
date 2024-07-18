@@ -1,6 +1,6 @@
 locals {
   node_groups = {
-    for prop in var.eks_cluster.node_groups : prop.name => prop
+    for idx, prop in var.eks_cluster.node_groups : prop.name => merge(prop, { subnet_ids = [aws_subnet.private[idx].id] })
   }
 }
 module "eks" {
@@ -55,6 +55,7 @@ module "eks" {
     }
     vpc-cni = {
       most_recent = var.eks_cluster.addons_version_most_recent
+      configuration_values = "{\"enableNetworkPolicy\": \"true\"}"
     }
     kube-proxy = {
       most_recent = var.eks_cluster.addons_version_most_recent
@@ -76,7 +77,6 @@ module "eks" {
   // EKS Managed Node Groups Defaults
   eks_managed_node_group_defaults = {
     ami_type        = var.eks_cluster.ami_type
-    subnet_ids      = aws_subnet.private[*].id
     create_iam_role = var.eks_cluster.create_node_iam_role
     iam_role_arn    = aws_iam_role.node_group.arn,
   }

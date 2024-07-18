@@ -11,13 +11,3 @@ resource "kubernetes_storage_class" "ebs" {
     "encrypted" : "true"
   })
 }
-
-resource "kubernetes_namespace" "namespaces" {
-  provider = kubernetes
-  count    = length(var.eks_namespaces)
-
-  metadata {
-    name = var.eks_namespaces[count.index]
-  }
-  depends_on = [module.eks]
-}

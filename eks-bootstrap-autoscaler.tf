@@ -48,19 +48,33 @@ resource "helm_release" "autoscaler" {
     value = module.irsa-ca.iam_role_arn
   }
 
-  set {
-    name = "cluster-autoscaler.autoscalingGroups[0].name"
-    value = module.eks.eks_managed_node_groups_autoscaling_group_names[0]
+  dynamic "set" {
+    for_each = module.eks.eks_managed_node_groups_autoscaling_group_names
+    content {
+      name  = "cluster-autoscaler.autoscalingGroups[${set.key}].name"
+      value = set.value
+    }
+  }
+
+  dynamic "set" {
+    for_each = var.eks_cluster.node_groups
+    content {
+      name  = "cluster-autoscaler.autoscalingGroups[${set.key}].minSize"
+      value = set.value.min_size
+    }
+  }
+
+  dynamic "set" {
+    for_each = var.eks_cluster.node_groups
+    content {
+      name  = "cluster-autoscaler.autoscalingGroups[${set.key}].maxSize"
+      value = set.value.max_size
+    }
   }
 
   set {
-    name = "cluster-autoscaler.autoscalingGroups[0].minSize"
-    value = var.eks_cluster.node_groups.0.min_size
-  }
-
-  set {
-    name = "cluster-autoscaler.autoscalingGroups[0].maxSize"
-    value = var.eks_cluster.node_groups.0.max_size
+    name = "cluster-autoscaler.extraArgs.balance-similar-node-groups"
+    value = true
   }
 
   depends_on = [

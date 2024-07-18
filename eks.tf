@@ -54,7 +54,7 @@ module "eks" {
       most_recent = var.eks_cluster.addons_version_most_recent
     }
     vpc-cni = {
-      most_recent = var.eks_cluster.addons_version_most_recent
+      most_recent          = var.eks_cluster.addons_version_most_recent
       configuration_values = "{\"enableNetworkPolicy\": \"true\"}"
     }
     kube-proxy = {

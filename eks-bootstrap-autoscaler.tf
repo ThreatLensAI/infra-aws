@@ -73,7 +73,7 @@ resource "helm_release" "autoscaler" {
   }
 
   set {
-    name = "cluster-autoscaler.extraArgs.balance-similar-node-groups"
+    name  = "cluster-autoscaler.extraArgs.balance-similar-node-groups"
     value = true
   }
 

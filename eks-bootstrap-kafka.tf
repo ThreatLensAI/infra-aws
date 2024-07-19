@@ -17,8 +17,9 @@ resource "kubernetes_secret" "kafka" {
     namespace = kubernetes_namespace.kafka.metadata.0.name
   }
   data = {
-    ".dockerconfigjson" = var.eks_bootstrap_secrets.dockerhubconfigjson
+    ".dockerconfigjson" = base64decode(var.eks_bootstrap_secrets.dockerhubconfigjson)
   }
+  type       = "kubernetes.io/dockerconfigjson"
   depends_on = [kubernetes_namespace.kafka]
 }
 

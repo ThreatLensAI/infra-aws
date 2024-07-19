@@ -17,8 +17,9 @@ resource "kubernetes_secret" "autoscaler" {
     namespace = kubernetes_namespace.autoscaler.metadata.0.name
   }
   data = {
-    ".dockerconfigjson" = var.eks_bootstrap_secrets.dockerhubconfigjson
+    ".dockerconfigjson" = base64decode(var.eks_bootstrap_secrets.dockerhubconfigjson)
   }
+  type       = "kubernetes.io/dockerconfigjson"
   depends_on = [kubernetes_namespace.autoscaler]
 }
 
@@ -90,7 +91,7 @@ resource "helm_release" "autoscaler" {
   }
 
   set_sensitive {
-    name  = "image.pullSecrets[0]"
+    name  = "cluster-autoscaler.image.pullSecrets[0]"
     value = kubernetes_secret.autoscaler.metadata.0.name
   }
 

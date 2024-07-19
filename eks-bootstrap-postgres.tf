@@ -99,7 +99,8 @@ resource "kubernetes_secret" "postgresql" {
     namespace = kubernetes_namespace.postgresql.metadata.0.name
   }
   data = {
-    ".dockerconfigjson" = var.eks_bootstrap_secrets.dockerhubconfigjson
+    ".dockerconfigjson" = base64decode(var.eks_bootstrap_secrets.dockerhubconfigjson)
   }
+  type       = "kubernetes.io/dockerconfigjson"
   depends_on = [kubernetes_namespace.postgresql]
 }

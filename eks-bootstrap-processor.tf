@@ -1,5 +1,5 @@
 locals {
-  operator_values_files = [for file_path in var.eks_bootstrap_operator.values_file_paths : "${file(file_path)}"]
+  operator_values_files  = [for file_path in var.eks_bootstrap_operator.values_file_paths : "${file(file_path)}"]
   processor_values_files = [for file_path in var.eks_bootstrap_processor.values_file_paths : "${file(file_path)}"]
 }
 

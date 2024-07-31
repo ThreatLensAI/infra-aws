@@ -1,4 +1,6 @@
 pilot:
+  podLabels:
+    fluentbit-logs: 'true'
   autoscaleEnabled: false
   traceSampling: 100
   resources:
@@ -8,6 +10,8 @@ pilot:
 global:
   logAsJson: true
   proxy:
+    excludeInboundPorts: "5432"
+    excludeOutboundPorts: "5432"
     resources:
       requests:
         cpu: 10m

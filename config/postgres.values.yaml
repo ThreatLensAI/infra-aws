@@ -1,6 +1,7 @@
 primary:
   podlabels:
     sidecar.istio.io/inject: 'false'
+    fluentbit-logs: 'true'
   resources:
     requests:
       cpu: 500m

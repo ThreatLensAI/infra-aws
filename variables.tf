@@ -538,3 +538,33 @@ variable "eks_bootstrap_grafana" {
     values_file_paths = optional(list(string), [])
   })
 }
+
+variable "eks_bootstrap_fluentbit" {
+  type = object({
+    name              = string
+    version           = optional(string, null)
+    namespace         = optional(string, "fluentbit")
+    repository        = optional(string, null)
+    chart             = string
+    values            = optional(map(string), {})
+    values_file_paths = optional(list(string), [])
+  })
+}
+
+variable "fluentbit-iam" {
+  type = object({
+    create_role                    = optional(bool, true)
+    role_name                      = string
+    oidc_fully_qualified_audiences = list(string)
+    oidc_fully_qualified_subjects  = list(string)
+    policy = object({
+      name        = string
+      description = string
+      statements = list(object({
+        effect    = string
+        actions   = list(string)
+        resources = list(string)
+      }))
+    })
+  })
+}

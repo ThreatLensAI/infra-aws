@@ -117,3 +117,21 @@ resource "aws_iam_policy" "cluster_autoscaler_policy" {
   policy      = data.aws_iam_policy_document.cluster_autoscaler_policy_document.json
 }
 
+// FLUETBIT CLOUDWATCH POLICY SETUP
+
+data "aws_iam_policy_document" "fluentbit_cloudwatch_policy_document" {
+  dynamic "statement" {
+    for_each = var.fluentbit-iam.policy.statements
+    content {
+      effect    = statement.value.effect
+      actions   = statement.value.actions
+      resources = statement.value.resources
+    }
+  }
+}
+
+resource "aws_iam_policy" "fluentbit_cloudwatch_policy" {
+  name        = var.fluentbit-iam.policy.name
+  description = var.fluentbit-iam.policy.description
+  policy      = data.aws_iam_policy_document.fluentbit_cloudwatch_policy_document.json
+}

@@ -4,5 +4,5 @@ resource "kubernetes_namespace" "operations" {
     name = var.eks_bootstrap_prometheus.namespace
   }
 
-  depends_on = [helm_release.autoscaler]
+  depends_on = [helm_release.fluentbit]
 }

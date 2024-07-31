@@ -24,3 +24,5 @@ pod:
     failureThreshold: 3
     successThreshold: 1
     periodSeconds: 10
+podLabels:
+  fluentbit-logs: 'true'

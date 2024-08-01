@@ -568,3 +568,31 @@ variable "fluentbit-iam" {
     })
   })
 }
+
+variable "eks_bootstrap_operations" {
+  type = object({
+    route53_hosted_zone_arns = list(string)
+
+    external_dns = object({
+      namespace        = optional(string, "operations")
+      create_namespace = optional(bool, false)
+      chart            = optional(string, "external-dns")
+      chart_version    = optional(string, "1.14.3")
+      wait             = optional(bool, true)
+      values           = optional(list(string), ["provider: aws"])
+    })
+
+    cert_manager = object({
+      namespace        = optional(string, "operations")
+      create_namespace = optional(bool, false)
+      chart            = optional(string, "cert-manager")
+      chart_version    = optional(string, "v1.14.3")
+      wait             = optional(bool, true)
+      values           = optional(list(string), [])
+    })
+  })
+}
+
+variable "domain" {
+  type = string
+}

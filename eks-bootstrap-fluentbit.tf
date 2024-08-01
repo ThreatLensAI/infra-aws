@@ -31,7 +31,7 @@ resource "helm_release" "fluentbit" {
   version    = var.eks_bootstrap_fluentbit.version
   repository = var.eks_bootstrap_fluentbit.repository
   chart      = var.eks_bootstrap_fluentbit.chart
-  namespace  = kubernetes_namespace.postgresql.metadata.0.name
+  namespace  = kubernetes_namespace.fluentbit.metadata.0.name
 
   values = local.fluentbit_values_files
 

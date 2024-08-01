@@ -3,13 +3,15 @@ resource "kubernetes_namespace" "istio_system" {
   metadata {
     name = var.eks_bootstrap_istiod.namespace
   }
-  depends_on = [kubernetes_namespace.operations]
+  depends_on = [helm_release.prometheus, helm_release.grafana]
 }
 
 locals {
-  istio_base_values_files    = [for file_path in var.eks_bootstrap_istio_base.values_file_paths : "${file(file_path)}"]
-  istiod_values_files        = [for file_path in var.eks_bootstrap_istiod.values_file_paths : "${file(file_path)}"]
-  istio_gateway_values_files = [for file_path in var.eks_bootstrap_istio_gateway.values_file_paths : "${file(file_path)}"]
+  istio_base_values_files = [for file_path in var.eks_bootstrap_istio_base.values_file_paths : "${file(file_path)}"]
+  istiod_values_files     = [for file_path in var.eks_bootstrap_istiod.values_file_paths : "${file(file_path)}"]
+  istio_gateway_values_files = [for file_path in var.eks_bootstrap_istio_gateway.values_file_paths : "${templatefile(file_path, {
+    domain = var.domain
+  })}"]
 }
 
 resource "helm_release" "istio_base" {
@@ -67,8 +69,26 @@ module "aws_load_balancer_controller" {
   cluster_endpoint  = module.eks.cluster_endpoint
   cluster_version   = module.eks.cluster_version
   oidc_provider_arn = module.eks.oidc_provider_arn
+  aws_load_balancer_controller = {
+    set = [{
+      name  = "vpcId"
+      value = aws_vpc.cluster.id
+    }]
+
+    wait = true
+  }
 
   enable_aws_load_balancer_controller = true
+
+  enable_cert_manager                   = true
+  cert_manager_route53_hosted_zone_arns = var.eks_bootstrap_operations.route53_hosted_zone_arns
+  cert_manager                          = var.eks_bootstrap_operations.cert_manager
+
+  enable_external_dns            = true
+  external_dns_route53_zone_arns = var.eks_bootstrap_operations.route53_hosted_zone_arns
+  external_dns                   = var.eks_bootstrap_operations.external_dns
+
+  depends_on = [helm_release.istiod]
 }
 
 resource "helm_release" "istio_gateway" {

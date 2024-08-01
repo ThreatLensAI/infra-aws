@@ -1,5 +1,5 @@
 primary:
-  podlabels:
+  podLabels:
     sidecar.istio.io/inject: 'false'
     fluentbit-logs: 'true'
   resources:
@@ -21,7 +21,7 @@ primary:
       app.kubernetes.io/part-of: webapp-cve-consumer
     extraIngress:
       - ports:
-          - port: '{{ .Values.metrics.containerPorts.metrics }}'
+          - port: 9187
         from:
           - namespaceSelector:
               matchLabels:

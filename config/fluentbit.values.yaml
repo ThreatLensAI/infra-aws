@@ -17,7 +17,7 @@ config:
         Path /var/log/containers/*.log
         Exclude_Path /var/log/containers/*_istio-proxy*,/var/log/containers/*_istio-init*
         multiline.parser docker, cri
-        Tag app.*
+        Tag kube.*
         Mem_Buf_Limit 100MB
         Skip_Long_Lines On
         Read_from_Head On
@@ -25,7 +25,7 @@ config:
   filters: |
     [FILTER]
         Name kubernetes
-        Match app.*
+        Match kube.*
         Merge_Log On
         Keep_Log Off
         K8S-Logging.Parser On
@@ -33,16 +33,16 @@ config:
 
     [FILTER]
         Name grep
-        Match *
+        Match kube.*
         Regex $kubernetes['labels']['fluentbit-logs'] true
 
   outputs: |
     [OUTPUT]
         Name cloudwatch_logs
-        Match app.*
+        Match kube.*
         region ${region}
         log_group_name /aws/containerinsights/${cluster_name}/application
-        log_stream_prefix app.
+        log_stream_prefix application-
         auto_create_group true
         extra_user_agent container-insights
         workers 1

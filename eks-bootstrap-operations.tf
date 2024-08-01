@@ -7,7 +7,7 @@ resource "kubernetes_namespace" "operations" {
   depends_on = [helm_release.fluentbit]
 }
 
-module "operations" {
+module "lb-controller" {
   source  = "aws-ia/eks-blueprints-addons/aws"
   version = "~> 1.16"
 
@@ -26,6 +26,23 @@ module "operations" {
     wait = true
   }
 
+  depends_on = [kubernetes_namespace.operations, helm_release.kafka, helm_release.postgresql, helm_release.prometheus, helm_release.consumer, helm_release.processor, helm_release.cve_operator, helm_release.grafana]
+}
+
+resource "time_sleep" "wait_for_lb_controller" {
+  depends_on      = [module.lb-controller.aws_load_balancer_controller]
+  create_duration = var.wait_duration_aws_load_balancer_controller
+}
+
+module "operations" {
+  source  = "aws-ia/eks-blueprints-addons/aws"
+  version = "~> 1.16"
+
+  cluster_name      = module.eks.cluster_name
+  cluster_endpoint  = module.eks.cluster_endpoint
+  cluster_version   = module.eks.cluster_version
+  oidc_provider_arn = module.eks.oidc_provider_arn
+
   enable_cert_manager                   = true
   cert_manager_route53_hosted_zone_arns = var.eks_bootstrap_operations.route53_hosted_zone_arns
   cert_manager                          = var.eks_bootstrap_operations.cert_manager
@@ -34,10 +51,5 @@ module "operations" {
   external_dns_route53_zone_arns = var.eks_bootstrap_operations.route53_hosted_zone_arns
   external_dns                   = var.eks_bootstrap_operations.external_dns
 
-  depends_on = [helm_release.fluentbit, kubernetes_namespace.operations]
-}
-
-resource "time_sleep" "wait_for_operations" {
-  depends_on      = [module.operations]
-  create_duration = var.wait_duration_aws_load_balancer_controller
+  depends_on = [kubernetes_namespace.operations, time_sleep.wait_for_lb_controller, module.lb-controller.aws_load_balancer_controller]
 }

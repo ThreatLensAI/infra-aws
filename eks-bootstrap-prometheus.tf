@@ -21,7 +21,7 @@ resource "helm_release" "prometheus" {
     }
   }
 
-  depends_on = [kubernetes_namespace.operations, helm_release.kafka, helm_release.postgresql]
+  depends_on = [kubernetes_namespace.operations, helm_release.fluentbit]
 }
 
 

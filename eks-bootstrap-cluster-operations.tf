@@ -28,7 +28,8 @@ resource "helm_release" "cluster_operations" {
     helm_release.fluentbit,
     helm_release.istio_base,
     helm_release.istiod,
-    module.operations,
+    module.operations.cert_manager,
+    module.operations.external_dns,
     helm_release.istio_gateway,
     helm_release.kafka,
     helm_release.postgresql,
@@ -36,5 +37,6 @@ resource "helm_release" "cluster_operations" {
     helm_release.grafana,
     helm_release.consumer,
     helm_release.processor,
+    time_sleep.wait_for_lb_controller
   ]
 }

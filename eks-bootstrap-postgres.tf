@@ -10,7 +10,7 @@ resource "kubernetes_namespace" "postgresql" {
       istio-injection = "enabled"
     }
   }
-  depends_on = [module.eks, time_sleep.wait_for_operations, helm_release.istiod, helm_release.kafka]
+  depends_on = [module.eks, helm_release.istiod, helm_release.kafka]
 }
 
 resource "random_password" "database_password" {
@@ -70,7 +70,8 @@ resource "helm_release" "postgresql" {
     kubernetes_storage_class.ebs,
     module.eks.cluster_name,
     helm_release.autoscaler,
-    helm_release.istiod
+    helm_release.istiod,
+    helm_release.kafka
   ]
 }
 

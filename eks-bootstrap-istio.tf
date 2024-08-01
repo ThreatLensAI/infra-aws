@@ -11,7 +11,7 @@ resource "kubernetes_namespace" "istio_system" {
   metadata {
     name = var.eks_bootstrap_istiod.namespace
   }
-  depends_on = [time_sleep.wait_for_operations, module.operations]
+  depends_on = [helm_release.prometheus]
 }
 
 resource "helm_release" "istio_base" {
@@ -37,7 +37,7 @@ resource "helm_release" "istio_base" {
     value = "default"
   }
 
-  depends_on = [time_sleep.wait_for_operations, kubernetes_namespace.istio_system]
+  depends_on = [kubernetes_namespace.istio_system, helm_release.prometheus]
 }
 
 resource "helm_release" "istiod" {
@@ -58,7 +58,7 @@ resource "helm_release" "istiod" {
     }
   }
 
-  depends_on = [time_sleep.wait_for_operations, kubernetes_namespace.istio_system, helm_release.istio_base]
+  depends_on = [kubernetes_namespace.istio_system, helm_release.istio_base, helm_release.prometheus]
 }
 
 resource "helm_release" "istio_gateway" {
@@ -79,5 +79,5 @@ resource "helm_release" "istio_gateway" {
     }
   }
 
-  depends_on = [time_sleep.wait_for_operations, module.operations, kubernetes_namespace.istio_system, helm_release.istio_base, helm_release.istiod]
+  depends_on = [time_sleep.wait_for_lb_controller, module.operations.cert_manager, module.operations.external_dns, kubernetes_namespace.istio_system, helm_release.istio_base, helm_release.istiod]
 }

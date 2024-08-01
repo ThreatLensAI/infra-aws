@@ -65,7 +65,7 @@ resource "helm_release" "consumer" {
     value = var.eks_bootstrap_secrets.dockerhubconfigjson
   }
 
-  depends_on = [kubernetes_namespace.consumer, helm_release.kafka, helm_release.postgresql, helm_release.istiod, helm_release.prometheus]
+  depends_on = [kubernetes_namespace.consumer, helm_release.kafka, helm_release.postgresql]
 }
 
 resource "kubernetes_limit_range" "consumer" {

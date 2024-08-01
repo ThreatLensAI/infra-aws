@@ -66,10 +66,7 @@ resource "helm_release" "cve_operator" {
   depends_on = [
     module.eks.cluster_name,
     helm_release.postgresql,
-    helm_release.kafka,
-    helm_release.autoscaler,
-    helm_release.istiod,
-    helm_release.prometheus,
+    helm_release.kafka
   ]
 }
 
@@ -110,7 +107,6 @@ resource "helm_release" "processor" {
     module.eks.cluster_name,
     helm_release.postgresql,
     helm_release.kafka,
-    helm_release.autoscaler,
     helm_release.cve_operator
   ]
 }

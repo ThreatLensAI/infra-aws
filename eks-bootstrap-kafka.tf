@@ -10,7 +10,7 @@ resource "kubernetes_namespace" "kafka" {
       istio-injection = "enabled"
     }
   }
-  depends_on = [module.eks, time_sleep.wait_for_operations, helm_release.istiod]
+  depends_on = [module.eks, helm_release.istiod]
 }
 
 resource "kubernetes_secret" "kafka" {

@@ -1,0 +1,13 @@
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+  
+webhook:
+  podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+cainjector:
+  podDisruptionBudget:
+  enabled: true
+  minAvailable: 1

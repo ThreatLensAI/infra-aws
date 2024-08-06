@@ -584,7 +584,8 @@ variable "fluentbit-iam" {
 
 variable "eks_bootstrap_operations" {
   type = object({
-    route53_hosted_zone_arns = list(string)
+    aws_load_balancer_controller_values_file_path = optional(list(string), [])
+    route53_hosted_zone_arns                      = list(string)
 
     external_dns = object({
       namespace        = optional(string, "operations")
@@ -593,6 +594,7 @@ variable "eks_bootstrap_operations" {
       chart_version    = optional(string, "1.14.3")
       wait             = optional(bool, true)
       values           = optional(list(string), ["provider: aws"])
+      values_file_path = optional(list(string), [])
     })
 
     cert_manager = object({
@@ -602,6 +604,17 @@ variable "eks_bootstrap_operations" {
       chart_version    = optional(string, "v1.14.3")
       wait             = optional(bool, true)
       values           = optional(list(string), [])
+      values_file_path = optional(list(string), [])
+    })
+
+    metrics_server = object({
+      namespace        = optional(string, "operations")
+      create_namespace = optional(bool, false)
+      chart            = optional(string, "metrics-server")
+      chart_version    = optional(string, "3.12.0")
+      wait             = optional(bool, true)
+      values           = optional(list(string), [])
+      values_file_path = optional(list(string), [])
     })
   })
 }

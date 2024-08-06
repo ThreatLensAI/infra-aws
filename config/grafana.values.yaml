@@ -15,3 +15,7 @@ dashboardsConfigMaps:
     fileName: kafka-dashboard.json
   - configMapName: postgres-dashboard
     fileName: postgres-dashboard.json
+grafana:
+  pdb:
+    create: true
+    minAvailable: 1

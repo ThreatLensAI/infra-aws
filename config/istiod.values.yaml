@@ -1,7 +1,13 @@
 pilot:
   podLabels:
     fluentbit-logs: 'true'
-  autoscaleEnabled: false
+  autoscaleEnabled: true
+  autoscaleMin: 1
+  autoscaleMax: 3
+  cpu:
+    targetAverageUtilization: 85
+  memory:
+    targetAverageUtilization: 85
   traceSampling: 100
   resources:
     requests:
@@ -9,6 +15,8 @@ pilot:
       memory: 1024Mi
   image: marlapativ/pilot:1.22.3
 global:
+  defaultPodDisruptionBudget:
+    enabled: true
   logAsJson: true
   proxy:
     excludeInboundPorts: '5432'

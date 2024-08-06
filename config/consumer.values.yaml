@@ -1,4 +1,4 @@
-replicaCount: 5
+replicaCount: 1
 db:
   config:
     host: 'postgresql.postgresql.svc.cluster.local'
@@ -11,7 +11,7 @@ resources:
     cpu: 500m
     memory: 384Mi
   requests:
-    cpu: 375m
+    cpu: 250m
     memory: 256Mi
 pod:
   readinessProbe:
@@ -26,3 +26,17 @@ pod:
     periodSeconds: 10
 podLabels:
   fluentbit-logs: 'true'
+
+pdb:
+  create: true
+  minAvailable: 2
+  maxUnavailable: {}
+
+autoscaling:
+  hpa:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 5
+    targetCPU: 5
+    targetMemory: 5
+    annotations: {}

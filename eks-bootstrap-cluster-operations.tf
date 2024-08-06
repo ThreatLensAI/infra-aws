@@ -34,6 +34,7 @@ resource "helm_release" "cluster_operations" {
     helm_release.kafka,
     helm_release.postgresql,
     helm_release.prometheus,
+    module.metrics-server.metrics_server,
     helm_release.grafana,
     helm_release.consumer,
     helm_release.processor,

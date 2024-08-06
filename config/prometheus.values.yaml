@@ -1,4 +1,5 @@
 prometheus:
+  resourcesPreset: "small"
   additionalScrapeConfigs:
     enabled: true
     type: internal
@@ -16,3 +17,10 @@ operator:
   pdb:
     create: true
     minAvailable: 1
+  resourcesPreset: "nano"
+
+alertmanager:
+  resourcesPreset: "nano"
+
+blackboxExporter:
+  resourcesPreset: "nano"

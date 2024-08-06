@@ -8,15 +8,15 @@ resource "kubernetes_namespace" "operations" {
 }
 
 locals {
-  lb_controller_values_files = [for file_path in var.eks_bootstrap_operations.aws_load_balancer_controller_values_file_path : "${file(file_path)}"]
+  lb_controller_values_files = [for file_path in var.eks_bootstrap_operations.aws_load_balancer_controller_values_file_paths : "${file(file_path)}"]
 
-  cert_manager_values_files = [for file_path in var.eks_bootstrap_operations.cert_manager.values_file_path : "${file(file_path)}"]
+  cert_manager_values_files = [for file_path in var.eks_bootstrap_operations.cert_manager.values_file_paths : "${file(file_path)}"]
   cert_manager              = merge(var.eks_bootstrap_operations.cert_manager, { values = local.cert_manager_values_files })
 
-  external_dns_values_files = [for file_path in var.eks_bootstrap_operations.external_dns.values_file_path : "${file(file_path)}"]
+  external_dns_values_files = [for file_path in var.eks_bootstrap_operations.external_dns.values_file_paths : "${file(file_path)}"]
   external_dns              = merge(var.eks_bootstrap_operations.external_dns, { values = local.external_dns_values_files })
 
-  metrics_server_values_files = [for file_path in var.eks_bootstrap_operations.metrics_server.values_file_path : "${file(file_path)}"]
+  metrics_server_values_files = [for file_path in var.eks_bootstrap_operations.metrics_server.values_file_paths : "${file(file_path)}"]
   metrics_server              = merge(var.eks_bootstrap_operations.metrics_server, { values = local.metrics_server_values_files })
 }
 

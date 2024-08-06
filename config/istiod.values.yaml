@@ -13,6 +13,9 @@ pilot:
     requests:
       cpu: 500m
       memory: 1024Mi
+    limits:
+      cpu: 768m
+      memory: 1500Mi
   image: marlapativ/pilot:1.22.3
 global:
   defaultPodDisruptionBudget:
@@ -25,5 +28,8 @@ global:
       requests:
         cpu: 10m
         memory: 40Mi
+      limits:
+        cpu: 100m
+        memory: 100Mi
 meshConfig:
   accessLogFile: /dev/stdout

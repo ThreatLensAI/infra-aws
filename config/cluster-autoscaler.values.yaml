@@ -10,5 +10,4 @@ cluster-autoscaler:
     repository: marlapativ/cluster-autoscaler
     tag: v1.30.0
   podDisruptionBudget:
-    minAvailable: 1
     maxUnavailable: 0

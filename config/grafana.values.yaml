@@ -19,3 +19,4 @@ grafana:
   pdb:
     create: true
     minAvailable: 1
+  resourcesPreset: "nano"

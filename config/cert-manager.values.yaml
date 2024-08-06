@@ -1,13 +1,44 @@
 podDisruptionBudget:
   enabled: true
   minAvailable: 1
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 32Mi
+  limits:
+    cpu: 50m
+    memory: 100Mi
   
 webhook:
   podDisruptionBudget:
-  enabled: true
-  minAvailable: 1
+    enabled: true
+    minAvailable: 1
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      cpu: 50m
+      memory: 100Mi
 
 cainjector:
   podDisruptionBudget:
-  enabled: true
-  minAvailable: 1
+    enabled: true
+    minAvailable: 1
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      cpu: 50m
+      memory: 100Mi
+
+startupapicheck:
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      cpu: 50m
+      memory: 100Mi

@@ -22,6 +22,7 @@ global:
     enabled: true
   logAsJson: true
   proxy:
+    holdApplicationUntilProxyStarts: true
     excludeInboundPorts: '5432'
     excludeOutboundPorts: '5432'
     resources:

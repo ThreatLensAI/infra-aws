@@ -70,18 +70,18 @@ resource "helm_release" "autoscaler" {
   }
 
   dynamic "set" {
-    for_each = var.eks_cluster.node_groups
+    for_each = module.eks.eks_managed_node_groups_autoscaling_group_names
     content {
       name  = "cluster-autoscaler.autoscalingGroups[${set.key}].minSize"
-      value = set.value.min_size
+      value = [for node_group in local.node_groups: { min_size: node_group.min_size } if strcontains(set.value, node_group.name)][0].min_size
     }
   }
 
   dynamic "set" {
-    for_each = var.eks_cluster.node_groups
+    for_each = module.eks.eks_managed_node_groups_autoscaling_group_names
     content {
       name  = "cluster-autoscaler.autoscalingGroups[${set.key}].maxSize"
-      value = set.value.max_size
+      value = [for node_group in local.node_groups: { max_size: node_group.max_size } if strcontains(set.value, node_group.name)][0].max_size
     }
   }
 

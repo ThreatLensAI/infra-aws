@@ -6,9 +6,9 @@ ollama:
       enabled: true
       type: 'nvidia'
       number: 1
-      models:
-        - gemma:2b
-        - mxbai-embed-large:latest
+    models:
+      - gemma:2b
+      - mxbai-embed-large:latest
   resources:
     requests:
       memory: 4096Mi

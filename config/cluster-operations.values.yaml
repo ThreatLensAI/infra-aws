@@ -18,16 +18,17 @@ istio:
                 port:
                   number: 3000
                 host: grafana.operations.svc.cluster.local
-      tls:
-        - match:
-            - port: 443
-              sniHosts:
-                - ${domain}
+        - name: 'webui'
+          match:
+            - uri:
+                prefix: /webui
+          rewrite:
+            uri: /
           route:
             - destination:
-                host: grafana.operations.svc.cluster.local
                 port:
-                  number: 3000
+                  number: 80
+                host: open-webui.llm.svc.cluster.local
 
 certmanager:
   namespace: 'operations'

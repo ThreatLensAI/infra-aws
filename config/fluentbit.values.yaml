@@ -5,7 +5,8 @@ resources:
   requests:
     cpu: 100m
     memory: 128Mi
-
+tolerations:
+  - operator: Exists
 config:
   service: |
     [SERVICE]

@@ -9,8 +9,10 @@ ollama:
       type: 'nvidia'
       number: 1
     models:
-      - gemma:2b
-      - mxbai-embed-large:latest
+      - nomic-embed-text:v1.5
+      - mxbai-embed-large:335m
+      - gemma2:2b
+      - llama3.1:8b
   resources:
     requests:
       memory: 4096Mi
@@ -45,11 +47,11 @@ pipelines:
     - name: LLAMAINDEX_OLLAMA_BASE_URL
       value: 'http://open-webui-ollama.llm.svc.cluster.local:11434'
     - name: LLAMAINDEX_MODEL_NAME
-      value: 'gemma:2b'
+      value: 'gemma2:2b'
     - name: EMBEDDING_DIM
-      value: '1024'
+      value: '768'
     - name: LLAMAINDEX_EMBEDDING_MODEL_NAME
-      value: 'mxbai-embed-large:latest'
+      value: 'nomic-embed-text:v1.5'
     - name: DB_HOST
       value: 'postgresql.postgresql.svc.cluster.local'
     - name: DB_PORT

@@ -25,3 +25,7 @@ alertmanager:
 
 blackboxExporter:
   resourcesPreset: 'nano'
+
+node-exporter:
+  tolerations:
+    - operator: Exists

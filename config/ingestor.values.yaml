@@ -7,12 +7,12 @@ env:
   KAFKA_BROKERS: 'kafka-controller-0.kafka-controller-headless.kafka.svc.cluster.local:9092,kafka-controller-1.kafka-controller-headless.kafka.svc.cluster.local:9092,kafka-controller-2.kafka-controller-headless.kafka.svc.cluster.local:9092'
   KAFKA_SERVICE: 'kafka.kafka.svc.cluster.local'
   KAFKA_TOPIC: 'cve'
-  KAFKA_CONSUMER_GROUP_ID: 'ingestor'
   PORT: '3001'
   LLAMAINDEX_OLLAMA_BASE_URL: 'http://open-webui-ollama.llm.svc.cluster.local:11434'
-  LLAMAINDEX_MODEL_NAME: 'gemma:2b'
-  EMBEDDING_DIM: '1024'
-  LLAMAINDEX_EMBEDDING_MODEL_NAME: 'mxbai-embed-large:latest'
+  KAFKA_CONSUMER_GROUP_ID: 'ingestor'
+  LLAMAINDEX_EMBEDDING_MODEL_NAME: 'nomic-embed-text:v1.5'
+  EMBEDDING_DIM: '768'
+  DB_TABLE: 'embeddings'
 resources:
   limits:
     cpu: 500m

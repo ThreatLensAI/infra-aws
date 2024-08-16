@@ -6,29 +6,26 @@ istio:
   gateway:
     namespace: 'istio-system'
     virtualservice:
-      hosts:
-        - ${domain}
-      http:
-        - name: 'grafana'
-          match:
-            - uri:
-                prefix: /grafana
-          route:
-            - destination:
-                port:
-                  number: 3000
-                host: grafana.operations.svc.cluster.local
-        - name: 'webui'
-          match:
-            - uri:
-                prefix: /webui
-          rewrite:
-            uri: /
-          route:
-            - destination:
-                port:
-                  number: 80
-                host: open-webui.llm.svc.cluster.local
+      grafana:
+        hosts:
+          - 'grafana.${domain}'
+        http:
+          - name: 'grafana'
+            route:
+              - destination:
+                  port:
+                    number: 3000
+                  host: grafana.operations.svc.cluster.local
+      webui:
+        hosts:
+          - 'webui.${domain}'
+        http:
+          - name: 'webui'
+            route:
+              - destination:
+                  port:
+                    number: 80
+                  host: open-webui.llm.svc.cluster.local
 
 certmanager:
   namespace: 'operations'
@@ -38,7 +35,7 @@ certmanager:
 
 certificate:
   dnsNames:
-    - ${domain}
+    - "*.${domain}"
 
 kiali-server:
   external_services:

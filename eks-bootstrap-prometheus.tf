@@ -79,10 +79,15 @@ resource "helm_release" "grafana" {
     }
   }
 
-  set {
-    name  = "config.grafanaIniConfigMap"
-    value = kubernetes_config_map.grafana_ini_config.metadata.0.name
-  }
+  # set {
+  #   name  = "config.grafanaIniConfigMap"
+  #   value = kubernetes_config_map.grafana_ini_config.metadata.0.name
+  # }
+
+  # set {
+  #   name  = "config.useGrafanaIniFile"
+  #   value = "true"
+  # }
 
   depends_on = [kubernetes_config_map.grafana_dashboards_configs, helm_release.kafka, helm_release.postgresql, helm_release.prometheus]
 }

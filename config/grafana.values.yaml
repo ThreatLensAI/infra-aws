@@ -23,9 +23,6 @@ grafana:
     minAvailable: 1
   resourcesPreset: 'nano'
 
-config:
-  useGrafanaIniFile: true
-
 serviceAccount:
   create: true
   automountServiceAccountToken: false

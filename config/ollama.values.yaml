@@ -1,6 +1,8 @@
 ollama:
   enabled: true
   fullnameOverride: 'open-webui-ollama'
+  podAnnotations:
+    sidecar.istio.io/inject: 'false'
   ollama:
     gpu:
       enabled: true
@@ -39,6 +41,39 @@ pipelines:
     limits:
       memory: 512Mi
       cpu: 500m
+  extraEnvVars:
+    - name: LLAMAINDEX_OLLAMA_BASE_URL
+      value: 'http://open-webui-ollama.llm.svc.cluster.local:11434'
+    - name: LLAMAINDEX_MODEL_NAME
+      value: 'gemma:2b'
+    - name: EMBEDDING_DIM
+      value: '1024'
+    - name: LLAMAINDEX_EMBEDDING_MODEL_NAME
+      value: 'mxbai-embed-large:latest'
+    - name: DB_HOST
+      value: 'postgresql.postgresql.svc.cluster.local'
+    - name: DB_PORT
+      value: '5432'
+    - name: DB_SCHEMA
+      value: 'cve'
+    - name: DB_TABLE
+      value: 'embeddings'
+    - name: DB_USER
+      valueFrom:
+        secretKeyRef:
+          name: llm-db-secrets
+          key: DB_USER
+    - name: DB_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: llm-db-secrets
+          key: DB_PASSWORD
+    - name: DB_DATABASE
+      valueFrom:
+        secretKeyRef:
+          name: llm-db-secrets
+          key: DB_DATABASE
+
 tolerations:
   - key: 'nvidia.com/gpu'
     operator: 'Exists'

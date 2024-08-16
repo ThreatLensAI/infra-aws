@@ -684,3 +684,8 @@ variable "eks_bootstrap_ingestor" {
     values_file_paths = optional(list(string), [])
   })
 }
+
+variable "wait_duration_ollama_ingestor" {
+  type    = string
+  default = "2m"
+}

@@ -31,6 +31,20 @@ resource "kubernetes_secret" "llm" {
   depends_on = [kubernetes_namespace.llm]
 }
 
+resource "kubernetes_secret" "llm_db" {
+  provider = kubernetes
+  metadata {
+    name      = "llm-db-secrets"
+    namespace = kubernetes_namespace.llm.metadata.0.name
+  }
+  data = {
+    "DB_DATABASE" = var.eks_bootstrap_postgresql_sensitive_values.database
+    "DB_USER"     = var.eks_bootstrap_postgresql_sensitive_values.username
+    "DB_PASSWORD" = random_password.database_password.result
+  }
+  depends_on = [kubernetes_namespace.llm]
+}
+
 resource "kubernetes_default_service_account" "default" {
   metadata {
     namespace = kubernetes_namespace.llm.metadata.0.name
@@ -62,11 +76,16 @@ resource "helm_release" "ollama" {
   depends_on = [
     kubernetes_namespace.llm,
     kubernetes_secret.llm,
+    kubernetes_secret.llm_db,
     kubernetes_default_service_account.default,
     helm_release.postgresql
   ]
 }
 
+resource "time_sleep" "wait_for_ollama" {
+  depends_on      = [helm_release.ollama]
+  create_duration = var.wait_duration_ollama_ingestor
+}
 
 resource "helm_release" "ingestor" {
   provider   = helm
@@ -126,7 +145,13 @@ resource "helm_release" "ingestor" {
     value = var.eks_bootstrap_secrets.dockerhubconfigjson
   }
 
-  depends_on = [kubernetes_namespace.llm, helm_release.kafka, helm_release.postgresql, helm_release.ollama]
+  depends_on = [
+    time_sleep.wait_for_ollama,
+    kubernetes_namespace.llm,
+    helm_release.kafka,
+    helm_release.postgresql,
+    helm_release.ollama
+  ]
 }
 
 resource "kubernetes_limit_range" "llm" {

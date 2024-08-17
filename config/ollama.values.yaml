@@ -30,7 +30,7 @@ pipelines:
   enabled: true
   image:
     repository: marlapativ/pipelines
-    tag: v1.2.1
+    tag: latest
     pullPolicy: Always
   tolerations:
     - key: 'nvidia.com/gpu'

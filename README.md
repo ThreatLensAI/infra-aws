@@ -1,6 +1,6 @@
-# CSYE7125 AWS Kubernetes(EKS) Infrastructure
+# AWS Kubernetes(EKS) Infrastructure
 
-This repo contains CSYE7125 AWS Kubernetes(EKS) Infrastructure files to setup EKS Cluster on AWS.
+This repo contains AWS Kubernetes(EKS) Infrastructure files to setup EKS Cluster on AWS.
 
 ## Installation
 
